@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 
 # Number of models to train
-number_of_models = 10
+number_of_models = 500
 
 
 # Data preprocessing
