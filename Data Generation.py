@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 
 # Number of models to train
-number_of_models = 100
+number_of_models = 10
 
 
 # Data preprocessing
@@ -69,7 +69,7 @@ y_test = to_categorical(y_test, K)
 
 # Create the CNN
 class SimpleCNN(Sequential):
-    def __init__(self, nb_classes=2):
+    def __init__(self, nb_classes=2, use_bn=False):
         super().__init__()
 
         self.add(Conv2D(
@@ -90,7 +90,10 @@ class SimpleCNN(Sequential):
             bias_initializer='zeros',
             activation = 'relu'
             ))
-        self.add(tf.keras.layers.BatchNormalization())
+        
+        if use_bn:
+            self.add(tf.keras.layers.BatchNormalization())
+
         self.add(GlobalAveragePooling2D())
         self.add(Flatten())
         self.add(Dense(
@@ -130,14 +133,52 @@ if not os.path.exists('./Results/'):
 save_path = './Results/' + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '/'
 os.makedirs(save_path, exist_ok=True)
 
-# Create dataframe to store results
-results = pd.DataFrame(columns=['model_id', 'test_accuracy', 'loss_value'])
+# Create a dataframe for the results of the models
+# Creating the default values to align with the layout of the scaleGMN paper's results
+default_vals = {
+    'Unnamed: 0': 'path', 
+    'config.activation': 'relu', 
+    'config.b_init': 'zeros', 
+    'config.dataset': 'cnn_zoo_new', 
+    'config.dnn_architecture': 'cnn', 
+    'config.dropout': np.float64(0), 
+    'config.epochs': np.int64(86), 
+    'config.epochs_between_checkpoints': np.int64(20), 
+    'config.init_std': np.float64(1), 
+    'config.l2reg': np.float64(0), 
+    'config.learning_rate': np.float64(0), 
+    'config.num_layers': np.int64(2), 
+    'config.num_units': np.int64(6), 
+    'config.optimizer': 'adam', 
+    'config.random_seed': np.int64(0), 
+    'config.train_fraction': np.float64(1.0), 
+    'config.w_init': 'he_normal', 
+    'modeldir': 'path', 
+    'step': np.int64(86), 
+    'test_accuracy': 0.1, 
+    'test_loss': np.float64(2.308499574661255), 
+    'train_accuracy': np.float64(0.0847092494368553), 
+    'train_loss': np.float64(2.308099881889894), 
+    'laststep': np.True_
+}
+
+# A helper function that merges defaults with provided data and adds the row to the DataFrame
+def add_row(data, frame, defaults=default_vals):
+
+    # Provided data will override the defaults.
+    new_row = {**defaults, **data}
+
+    new_row_df = pd.DataFrame([new_row])
+    return pd.concat([frame, new_row_df], ignore_index=True)
+
+# Create an empty DataFrame with the desired columns
+metrics = pd.DataFrame(columns=default_vals.keys())
 
 # Build and compile the CNN architecture
 model = SimpleCNN(nb_classes=10)
 input_shape = (None, 28, 28, 1)  # None is for the batch dimension
 model.build(input_shape)
-model.compile(optimizer='sgd',
+model.compile(optimizer='adam',
                     loss=categorical_crossentropy,
                     metrics=['accuracy'])
 model.summary()
@@ -156,9 +197,9 @@ for i in tqdm(range(number_of_models)):
     test_accuracy = stats[1]
     loss_value = stats[0]
 
-    #Add accuracy and hessian trace to results
-    new_row = pd.DataFrame({'model_id': [i], 'test_accuracy': [test_accuracy], 'loss_value': [loss_value]})
-    results = pd.concat([results, new_row], ignore_index=True)
+
+    # Add a row where only a few columns are specified, rest will be defaults
+    metrics = add_row({'test_accuracy': test_accuracy, 'test_loss': loss_value}, metrics)
 
     print(f"model_ id  {i}  ::  test accuracy  {test_accuracy}  :: loss  {loss_value}")
 
@@ -166,15 +207,58 @@ for i in tqdm(range(number_of_models)):
     flat_params = tf.concat([tf.reshape(w, [-1]) for w in model.trainable_weights], axis=0)
     flat_param_list.append(flat_params)
 
+
+
 # Stack all vectors into a matrix of shape (k, m)
 parameter_matrix = tf.stack(flat_param_list, axis=0)
 
 # Save as numpy array in drive
 np_parameter_matrix = parameter_matrix.numpy()
 np.save(save_path + '/weight.npy', np_parameter_matrix)
+print("Weights saved.")
+
+
+# Create a dataframe for the layout of the model parameters
+layout = pd.DataFrame(columns=[
+    'varname',
+    'start_idx',
+    'end_idx',
+    'size',
+    'shape'
+])
+
+start_idx = 0
+for layer in model.layers:
+    if layer.trainable_variables:
+        for variable in layer.trainable_variables[::-1]:
+             varname = f"sequential/{layer.name}/{variable.name}:0"
+             shape = variable.shape
+             size = np.prod(shape)
+             end_idx = start_idx + size
+
+             layout = pd.concat([layout, pd.DataFrame({
+                 'varname': [varname],
+                 'start_idx': [start_idx],
+                 'end_idx': [end_idx],
+                 'size': [size],
+                 'shape': [str(shape)]
+                 })
+             ])
+             start_idx = end_idx
+
+
+# Save layout as csv to path
+layout.to_csv(save_path + '/layout.csv', index=False)
+print("Layout saved.")
 
 # Save results as csv in drive
-results.to_csv(save_path + '/results_dataframe.csv', index=False)
+metrics.to_csv(save_path + '/metrics.csv', index=False)
+print("Metrics saved.")
+
+# Save the indexes file for the scaleGMN paper layout
+cnn_zoo_new_splits = pd.DataFrame([i for i in range(number_of_models)])
+cnn_zoo_new_splits.to_csv(save_path + '/cnn_zoo_new_splits.csv', index=False)
+print("Splits saved.")
 
 print("All results saved.")
 

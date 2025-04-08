@@ -1,0 +1,11 @@
+Unnamed: 0,config.activation,config.b_init,config.dataset,config.dnn_architecture,config.dropout,config.epochs,config.epochs_between_checkpoints,config.init_std,config.l2reg,config.learning_rate,config.num_layers,config.num_units,config.optimizer,config.random_seed,config.train_fraction,config.w_init,modeldir,step,test_accuracy,test_loss,train_accuracy,train_loss,laststep
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.15333333611488342,2.265533208847046,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.20000000298023224,2.151111602783203,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.2633333206176758,2.0502233505249023,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.2133333384990692,2.199366569519043,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.10000000149011612,2.269263505935669,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.14666666090488434,2.1754751205444336,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.15000000596046448,2.279092311859131,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.15000000596046448,2.2077717781066895,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.11666666716337204,2.2668755054473877,0.0847092494368553,2.308099881889894,True
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.23000000417232513,2.119141101837158,0.0847092494368553,2.308099881889894,True

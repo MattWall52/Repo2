@@ -1,0 +1,8 @@
+varname,start_idx,end_idx,size,shape
+sequential/conv2d/bias:0,0,6,6,"(6,)"
+sequential/conv2d/kernel:0,6,60,54,"(3, 3, 1, 6)"
+sequential/conv2d_1/bias:0,60,70,10,"(10,)"
+sequential/conv2d_1/kernel:0,70,610,540,"(3, 3, 6, 10)"
+sequential/dense/bias:0,610,620,10,"(10,)"
+sequential/dense/kernel:0,620,720,100,"(10, 10)"
+sequential/dense_1/kernel:0,720,820,100,"(10, 10)"

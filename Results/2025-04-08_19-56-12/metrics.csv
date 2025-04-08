@@ -1,0 +1,2 @@
+Unnamed: 0,config.activation,config.b_init,config.dataset,config.dnn_architecture,config.dropout,config.epochs,config.epochs_between_checkpoints,config.init_std,config.l2reg,config.learning_rate,config.num_layers,config.num_units,config.optimizer,config.random_seed,config.train_fraction,config.w_init,modeldir,step,test_accuracy,test_loss,train_accuracy,train_loss,laststep
+path,relu,zeros,cnn_zoo_new,cnn,0.0,86,20,1.0,0.0,0.0,2,6,adam,0,1.0,he_normal,path,86,0.20666666328907013,2.2128067016601562,0.0847092494368553,2.308099881889894,True
